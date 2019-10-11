@@ -1,13 +1,17 @@
 package com.rockyatlantic.workflow.rest.resources;
 
+import com.rockyatlantic.workflow.bob.BobWorkflowInitializer;
 import com.rockyatlantic.workflow.rest.models.CollectionDto;
 import com.rockyatlantic.workflow.rest.models.Workflow;
 import com.rockyatlantic.workflow.rest.service.WorkflowService;
+import com.rockyatlatnic.workflow.manager.Activity;
+import com.rockyatlatnic.workflow.manager.Initializer;
+import com.rockyatlatnic.workflow.manager.WorkflowManager;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 
 @Path(WorkflowResource.RESOURCE_PATH)
@@ -33,5 +37,21 @@ public class WorkflowResource {
         List<Workflow> workflows = this.workflowService.getWorkflows();
 
         return new CollectionDto<>(workflows);
+    }
+
+    /**
+     * Fairly useless method for testing, but needs to be deleted
+     */
+    @POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    public Response post() {
+        Initializer workflowInitializer = new BobWorkflowInitializer();
+        Activity initialActivity = workflowInitializer.initialize();
+        WorkflowManager workflowManager = new WorkflowManager(initialActivity);
+
+        // Hold onto your butts!
+        workflowManager.run();
+
+        return Response.created(UriBuilder.fromResource(WorkflowResource.class).build()).build();
     }
 }
