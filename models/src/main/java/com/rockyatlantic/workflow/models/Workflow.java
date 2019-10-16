@@ -1,4 +1,4 @@
-package com.rockyatlantic.workflow.rest.models;
+package com.rockyatlantic.workflow.models;
 
 import java.util.UUID;
 

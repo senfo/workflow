@@ -1,7 +1,7 @@
 package com.rockyatlantic.workflow.rest;
 
-import com.rockyatlantic.workflow.rest.resources.WorkflowResource;
-import com.rockyatlantic.workflow.rest.service.WorkflowService;
+import com.rockyatlantic.workflow.rest.resources.CatalogResource;
+import com.rockyatlantic.workflow.rest.service.CatalogService;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 
@@ -17,6 +17,6 @@ public class WorkflowRestApplication extends Application<WorkflowRestConfigurati
 
     @Override
     public void run(WorkflowRestConfiguration workflowRestConfiguration, Environment environment) {
-        environment.jersey().register(new WorkflowResource(new WorkflowService()));
+        environment.jersey().register(new CatalogResource(new CatalogService()));
     }
 }

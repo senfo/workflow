@@ -47,6 +47,11 @@
         <!--Internal Dependencies-->
         <dependency>
             <groupId>com.rockyatlantic</groupId>
+            <artifactId>models</artifactId>
+            <version>${workflow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rockyatlantic</groupId>
             <artifactId>workflow-manager</artifactId>
             <version>${workflow.version}</version>
         </dependency>
