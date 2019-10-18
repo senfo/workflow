@@ -42,6 +42,7 @@ public class CatalogResource {
 
     /**
      * Takes a {@link Catalog} object and kicks off the workflow process
+     * @param catalog The {@link Catalog} for which to initiate the workflow process
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -53,6 +54,6 @@ public class CatalogResource {
         // Hold onto your butts!
         workflowManager.run();
 
-        return Response.created(UriBuilder.fromResource(CatalogResource.class).build()).build();
+        return Response.created(UriBuilder.fromResource(CatalogResource.class).build()).entity(catalog).build();
     }
 }
