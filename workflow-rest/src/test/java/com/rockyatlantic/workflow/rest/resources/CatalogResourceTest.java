@@ -13,7 +13,7 @@ import java.util.UUID;
 public class CatalogResourceTest {
     @Test
     public void post() {
-        CatalogResource catalogResource = new CatalogResource(new CatalogService());
+        CatalogResource catalogResource = new CatalogResource(new CatalogService(null));
         Catalog catalog = new Catalog();
 
         // TODO: We'll add more later

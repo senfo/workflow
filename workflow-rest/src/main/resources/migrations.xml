@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="sefao (generated)" id="1571434632238-1">
+        <createTable catalogName="workflow" schemaName="public" tableName="catalog">
+            <column name="catalogid" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="catalog_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="sefao (generated)" id="1571434632238-2">
+        <createTable catalogName="workflow" schemaName="public" tableName="workflow">
+            <column name="workflowid" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="workflow_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="state" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

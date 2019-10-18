@@ -65,6 +65,12 @@
             <artifactId>workflow-bob</artifactId>
             <version>${workflow.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.rockyatlantic</groupId>
+            <artifactId>dao</artifactId>
+            <version>${workflow.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

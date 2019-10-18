@@ -10,7 +10,7 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>workflow-manager</artifactId>
+    <artifactId>dao</artifactId>
 
     <properties>
         <workflow.version>1.0</workflow.version>
@@ -18,19 +18,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jdbi3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-migrations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <!-- Internal dependencies -->
-        <dependency>
-            <groupId>com.rockyatlantic</groupId>
-            <artifactId>dao</artifactId>
-            <version>${workflow.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.rockyatlantic</groupId>
             <artifactId>models</artifactId>

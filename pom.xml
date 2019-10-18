@@ -10,8 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>models</module>
         <module>workflow-manager</module>
         <module>workflow-bob</module>
+        <module>workflow-dao</module>
         <module>workflow-rest</module>
     </modules>
 
