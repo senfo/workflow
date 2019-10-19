@@ -10,6 +10,7 @@ import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
+import org.apache.nifi.util.StopWatch;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +74,7 @@ public class HelloWorldProcessor extends AbstractProcessor {
     @Override
     public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
         FlowFile flowFile = session.get();
+        final StopWatch stopWatch = new StopWatch(true);
 
         if (flowFile == null) {
             return;
@@ -88,11 +91,15 @@ public class HelloWorldProcessor extends AbstractProcessor {
             flowFile = session.putAttribute(flowFile, "description", template.getDescription());
 
             this.getLogger().info(String.format(templateValue, template.getName()));
-            session.transfer(flowFile, SUCCESS);
         }
         catch (IOException err) {
-            this.getLogger().error("An error occurred  parsing the template");
+            this.getLogger().error("An error occurred while parsing the template", err);
             session.transfer(flowFile, ERROR);
+
+            throw new ProcessException(err);
         }
+
+        session.getProvenanceReporter().modifyContent(flowFile, stopWatch.getElapsed(TimeUnit.MILLISECONDS));
+        session.transfer(flowFile, SUCCESS);
     }
 }
