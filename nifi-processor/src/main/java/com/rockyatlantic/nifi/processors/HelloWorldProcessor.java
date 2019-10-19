@@ -11,6 +11,8 @@ import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HelloWorldProcessor extends AbstractProcessor {
+    private Set<Relationship> relationships = new HashSet<>();
+    private List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
     private static final String TEMPLATE_DESCRIPTOR = "Template";
     private static final String DEFAULT_TEMPLATE_VALUE = "Hello from %s!";
     private static PropertyDescriptor TEMPLATE = new PropertyDescriptor.Builder()
@@ -46,42 +50,49 @@ public class HelloWorldProcessor extends AbstractProcessor {
     private static final Relationship SUCCESS = new Relationship.Builder().name("success").description("Files are routed to success").build();
     private static final Relationship ERROR = new Relationship.Builder().name("error").description("Files are routed to error").build();
 
+    /**
+     * Initializes a new instance of the {@link HelloWorldProcessor} class
+     */
+    public HelloWorldProcessor() {
+        this.propertyDescriptors.add(TEMPLATE);
+        this.relationships.add(SUCCESS);
+        this.relationships.add(ERROR);
+    }
+
     @Override
     public Set<Relationship> getRelationships() {
-        Set<Relationship> relationships = new HashSet<Relationship>() {{
-            add(SUCCESS);
-            add(ERROR);
-        }};
-
-        return relationships;
+        return this.relationships;
     }
 
     @Override
     protected List<PropertyDescriptor> getSupportedPropertyDescriptors() {
-        List<PropertyDescriptor> propertyDescriptors = new ArrayList<PropertyDescriptor>() {{
-            add(TEMPLATE);
-        }};
-
-        return propertyDescriptors;
+        return this.propertyDescriptors;
     }
 
     @Override
-    public void onTrigger(ProcessContext context, ProcessSession session) {
-        final FlowFile flowFile = session.get();
+    public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
+        FlowFile flowFile = session.get();
 
         if (flowFile == null) {
             return;
         }
 
-        session.read(flowFile, inputStream -> {
+        try {
+            InputStream inputStream = session.read(flowFile);
             String jsonContent = IOUtils.toString(inputStream, Charset.defaultCharset());
             String templateValue = context.getProperty(TEMPLATE_DESCRIPTOR).getValue();
             SampleTemplate template = new Gson().fromJson(jsonContent, SampleTemplate.class);
 
-            this.getLogger().info(String.format(templateValue, template.getName()));
-        });
+            flowFile = session.putAttribute(flowFile, "id", Integer.toString(template.getId()));
+            flowFile = session.putAttribute(flowFile, "name", template.getName());
+            flowFile = session.putAttribute(flowFile, "description", template.getDescription());
 
-        session.transfer(flowFile, SUCCESS);
-        session.commit();
+            this.getLogger().info(String.format(templateValue, template.getName()));
+            session.transfer(flowFile, SUCCESS);
+        }
+        catch (IOException err) {
+            this.getLogger().error("An error occurred  parsing the template");
+            session.transfer(flowFile, ERROR);
+        }
     }
 }
