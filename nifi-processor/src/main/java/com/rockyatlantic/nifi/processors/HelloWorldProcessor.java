@@ -80,27 +80,27 @@ public class HelloWorldProcessor extends AbstractProcessor {
             return;
         }
 
-        try {
-            try(InputStream inputStream = session.read(flowFile)){
-                String jsonContent = IOUtils.toString(inputStream, Charset.defaultCharset());
-                String templateValue = context.getProperty(TEMPLATE_DESCRIPTOR).getValue();
-                SampleTemplate template = new Gson().fromJson(jsonContent, SampleTemplate.class);
-            }
+        FlowFile transferFile = session.create(flowFile);
 
-            flowFile = session.putAttribute(flowFile, "id", Integer.toString(template.getId()));
-            flowFile = session.putAttribute(flowFile, "name", template.getName());
-            flowFile = session.putAttribute(flowFile, "description", template.getDescription());
+        try (InputStream inputStream = session.read(flowFile)) {
+            String jsonContent = IOUtils.toString(inputStream, Charset.defaultCharset());
+            String templateValue = context.getProperty(TEMPLATE_DESCRIPTOR).getValue();
+            SampleTemplate template = new Gson().fromJson(jsonContent, SampleTemplate.class);
+
+            transferFile = session.putAttribute(transferFile, "id", Integer.toString(template.getId()));
+            transferFile = session.putAttribute(transferFile, "name", template.getName());
+            transferFile = session.putAttribute(transferFile, "description", template.getDescription());
 
             this.getLogger().info(String.format(templateValue, template.getName()));
+
+            session.getProvenanceReporter().modifyContent(transferFile, stopWatch.getElapsed(TimeUnit.MILLISECONDS));
+            session.transfer(transferFile, SUCCESS);
         }
         catch (IOException err) {
             this.getLogger().error("An error occurred while parsing the template", err);
-            session.transfer(flowFile, ERROR);
-
-            throw new ProcessException(err);
+            session.transfer(transferFile, ERROR);
         }
 
-        session.getProvenanceReporter().modifyContent(flowFile, stopWatch.getElapsed(TimeUnit.MILLISECONDS));
-        session.transfer(flowFile, SUCCESS);
+        session.remove(flowFile);
     }
 }
