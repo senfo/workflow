@@ -1,1 +1,2 @@
 com.rockyatlantic.nifi.processors.HelloWorldProcessor
+com.rockyatlantic.nifi.processors.HelloWorldLogProcessor

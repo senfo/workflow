@@ -73,7 +73,7 @@ public class HelloWorldProcessor extends AbstractProcessor {
 
     @Override
     public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
-        FlowFile flowFile = session.get();
+        final FlowFile flowFile = session.get();
         final StopWatch stopWatch = new StopWatch(true);
 
         if (flowFile == null) {
@@ -90,6 +90,7 @@ public class HelloWorldProcessor extends AbstractProcessor {
             transferFile = session.putAttribute(transferFile, "id", Integer.toString(template.getId()));
             transferFile = session.putAttribute(transferFile, "name", template.getName());
             transferFile = session.putAttribute(transferFile, "description", template.getDescription());
+            transferFile = session.putAttribute(transferFile, "original", jsonContent);
 
             this.getLogger().info(String.format(templateValue, template.getName()));
 
