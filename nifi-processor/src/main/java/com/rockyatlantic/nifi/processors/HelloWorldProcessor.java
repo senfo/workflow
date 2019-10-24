@@ -81,10 +81,11 @@ public class HelloWorldProcessor extends AbstractProcessor {
         }
 
         try {
-            InputStream inputStream = session.read(flowFile);
-            String jsonContent = IOUtils.toString(inputStream, Charset.defaultCharset());
-            String templateValue = context.getProperty(TEMPLATE_DESCRIPTOR).getValue();
-            SampleTemplate template = new Gson().fromJson(jsonContent, SampleTemplate.class);
+            try(InputStream inputStream = session.read(flowFile)){
+                String jsonContent = IOUtils.toString(inputStream, Charset.defaultCharset());
+                String templateValue = context.getProperty(TEMPLATE_DESCRIPTOR).getValue();
+                SampleTemplate template = new Gson().fromJson(jsonContent, SampleTemplate.class);
+            }
 
             flowFile = session.putAttribute(flowFile, "id", Integer.toString(template.getId()));
             flowFile = session.putAttribute(flowFile, "name", template.getName());
